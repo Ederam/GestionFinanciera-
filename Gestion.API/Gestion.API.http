@@ -1,6 +1,19 @@
 @Gestion.API_HostAddress = http://localhost:5284
 
-GET {{Gestion.API_HostAddress}}/weatherforecast/
+### 1. Verificar si tu API generó el mapa OpenAPI (Swagger base) correctamente:
+GET {{Gestion.API_HostAddress}}/openapi/v1.json
 Accept: application/json
 
-###
+### 2. Testear tu controlador creando un Gasto:
+POST {{Gestion.API_HostAddress}}/api/Gastos
+Content-Type: application/json
+
+{
+  "monto": 150.50,
+  "fecha": "2026-04-15T20:00:00Z",
+  "descripcion": "Compra de prueba de conexion",
+  "categoriaId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "usuarioId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "deudaId": null,
+  "presupuestoId": null
+}
