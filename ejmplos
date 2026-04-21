@@ -8,3 +8,20 @@ Insert de gastos
     "deudaId": null,
     "presupuestoId": null
 }
+
+insert de presupuesto
+{
+    "periodo": "Mayo 2026",
+    "fechaInicio": "2026-05-01T00:00:00Z",
+    "fechaFin": "2026-05-31T23:59:59Z",
+    "totalIngresosEstimados": 3500.00,
+    "usuarioId": "dcc5179f-74fc-40af-bc3d-11ef04237c69"
+}
+
+Insert de deuda
+{
+    "nombre": "Tarjeta de Crédito Visa",
+    "montoEstimado": 450.50,
+    "diaVencimiento": 15,
+    "usuarioId": "dcc5179f-74fc-40af-bc3d-11ef04237c69"
+}
