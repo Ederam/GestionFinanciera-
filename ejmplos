@@ -1,0 +1,10 @@
+Insert de gastos
+{
+    "monto": 45.90,
+    "fecha": "2026-04-20T21:23:00Z",
+    "descripcion": "Cena restaurante italiano",
+    "categoriaId": "d4a739c5-6b00-48a3-81db-1920abae6d4d",
+    "usuarioId": "dcc5179f-74fc-40af-bc3d-11ef04237c69",
+    "deudaId": null,
+    "presupuestoId": null
+}
