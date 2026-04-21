@@ -1,4 +1,5 @@
 using Gestion.Application.Gastos.Commands.CreateGasto;
+using Gestion.Application.Gastos.Queries.GetGastos;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,5 +20,11 @@ public class GastosController : ControllerBase
     public async Task<ActionResult<Guid>> Create(CreateGastoCommand command)
     {
         return await _mediator.Send(command);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<List<GastoDto>>> Get(Guid usuarioId)
+    {
+        return await _mediator.Send(new GetGastosQuery(usuarioId));
     }
 }
