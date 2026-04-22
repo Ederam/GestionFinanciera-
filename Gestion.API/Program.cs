@@ -1,3 +1,4 @@
+using Gestion.API.Middleware;
 using Gestion.Application;
 using Gestion.Infrastructure;
 using Scalar.AspNetCore;
@@ -13,6 +14,8 @@ builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
