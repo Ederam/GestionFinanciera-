@@ -1,10 +1,12 @@
 using Gestion.Application.Gastos.Commands.CreateGasto;
 using Gestion.Application.Gastos.Queries.GetGastos;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gestion.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class GastosController : ControllerBase

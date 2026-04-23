@@ -69,4 +69,14 @@ Utilizamos **Entity Framework Core**, que es un ORM (Object-Relational Mapper) c
 
 ---
 
+## 6. Autenticación y Autorización (JWT)
+
+Para proteger la API contra accesos no autorizados, utilizamos **JSON Web Tokens (JWT)**.
+
+### Flujo de Autenticación
+1. **Registro:** El usuario se crea utilizando `POST /api/Usuarios`, momento en el cual su contraseña es sometida a hashing (PBKDF2) con su propio Salt.
+2. **Login:** El usuario envía sus credenciales a `POST /api/Auth/login`. El sistema extrae el Salt de la base de datos, hashea la contraseña recibida y verifica que coincidan.
+3. **Generación del Token:** Si el acceso es correcto, se utiliza una `SymmetricSecurityKey` configurada en el `appsettings.json` para firmar criptográficamente un Token que contiene los "Claims" del usuario (Id, Nombre, Email).
+4. **Autorización:** Los controladores protegidos con la etiqueta `[Authorize]` interceptan la petición HTTP. Validamos que el Token no haya sido alterado ni haya expirado antes de permitir el acceso.
+
 *Nota: Este documento será actualizado automáticamente cada vez que incorporemos un nuevo concepto arquitectónico crítico al proyecto.*
