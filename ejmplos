@@ -25,3 +25,20 @@ Insert de deuda
     "diaVencimiento": 15,
     "usuarioId": "dcc5179f-74fc-40af-bc3d-11ef04237c69"
 }
+
+Test Crear Usuario
+{
+    "nombre": "Camilo Admin",
+    "email": "admin@camilo.com",
+    "password": "PasswordSecreto123"
+}
+641d4c4d-928a-413a-aaa1-2797628ad4a1
+
+test auth
+{
+    "email": "admin@camilo.com",
+    "password": "PasswordSecreto123"
+}
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NDFkNGM0ZC05MjhhLTQxM2EtYWFhMS0yNzk3NjI4YWQ0YTEiLCJlbWFpbCI6ImFkbWluQGNhbWlsby5jb20iLCJuYW1lIjoiQ2FtaWxvIEFkbWluIiwianRpIjoiNGMzNDE0ZTMtZWY2NC00Y2YyLTg0Y2EtZmQ3NzJmM2NmZDc5IiwiZXhwIjoxNzc2OTk4ODE4LCJpc3MiOiJHZXN0aW9uRmluYW5jaWVyYUFQSSIsImF1ZCI6Ikdlc3Rpb25GaW5hbmNpZXJhQXBwIn0.ayyxQcEf3KaWbUvIBc9mDnpnmsomngGmni9VVaqoHEg"
+}

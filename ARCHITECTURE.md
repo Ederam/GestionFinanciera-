@@ -79,4 +79,13 @@ Para proteger la API contra accesos no autorizados, utilizamos **JSON Web Tokens
 3. **Generación del Token:** Si el acceso es correcto, se utiliza una `SymmetricSecurityKey` configurada en el `appsettings.json` para firmar criptográficamente un Token que contiene los "Claims" del usuario (Id, Nombre, Email).
 4. **Autorización:** Los controladores protegidos con la etiqueta `[Authorize]` interceptan la petición HTTP. Validamos que el Token no haya sido alterado ni haya expirado antes de permitir el acceso.
 
+## 7. Pruebas Unitarias (Testing Automatizado)
+
+La aplicación cuenta con una suite de pruebas unitarias (`Gestion.Application.UnitTests`) para garantizar la fiabilidad del código.
+- **xUnit:** El framework de pruebas utilizado para definir los *Facts* y *Theories*.
+- **Moq:** Se utiliza para crear "Fakes" (simulaciones) de las dependencias externas (como la base de datos `IApplicationDbContext`). Esto nos permite probar la lógica de negocio pura sin tocar una base de datos real.
+- **Patrón AAA:** Todas las pruebas siguen la estructura de *Arrange* (preparar datos y mocks), *Act* (ejecutar la lógica) y *Assert* (verificar que el resultado es el esperado matemáticamente).
+
+---
+
 *Nota: Este documento será actualizado automáticamente cada vez que incorporemos un nuevo concepto arquitectónico crítico al proyecto.*
