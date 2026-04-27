@@ -1,1 +1,10 @@
 Postgres2026*
+
+para replicar  la base de datos en un nuevo ambiente
+dotnet ef database update
+
+ Generar el Script SQL (Para DBAs o Servidores)
+dotnet ef migrations script -o init_db.sql
+
+para sacar la base dedatos con insert
+pg_dump -h localhost -U postgres -d GestionFinancieraDb > backup_gestion.sql
