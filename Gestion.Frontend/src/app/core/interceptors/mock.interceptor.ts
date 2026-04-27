@@ -28,6 +28,11 @@ export const mockInterceptor: HttpInterceptorFn = (req, next) => {
     return of(new HttpResponse({ status: 200, body: mockGastos })).pipe(delay(800));
   }
 
+  if (isGastos && req.method === 'POST') {
+    console.log('--- [MOCK] Interceptando CreateGasto ---', req.body);
+    return of(new HttpResponse({ status: 201, body: { id: 'new-id-' + Math.random() } })).pipe(delay(1000));
+  }
+
   // Si no es ninguna de las anteriores, que siga su camino real
   return next(req);
 };

@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth.service';
 import { GastosService, Gasto } from '../../../core/services/gastos.service';
 import { Router } from '@angular/router';
+import { GastoFormComponent } from '../gasto-form/gasto-form.component';
 
 @Component({
   selector: 'app-gastos-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, GastoFormComponent],
   template: `
     <div class="dashboard-container">
       <nav class="glass-panel navbar">
@@ -19,8 +20,15 @@ import { Router } from '@angular/router';
         <div class="glass-panel main-card">
           <div class="card-header">
             <h2>Tus Gastos Recientes</h2>
-            <button class="btn-primary">+ Nuevo Gasto</button>
+            <button class="btn-primary" (click)="showForm = true">+ Nuevo Gasto</button>
           </div>
+
+          <!-- Componente del Formulario (Modal) -->
+          <app-gasto-form 
+            *ngIf="showForm" 
+            (onClose)="showForm = false"
+            (onSave)="handleSave()">
+          </app-gasto-form>
 
           <div class="table-container" *ngIf="gastos.length > 0; else emptyState">
             <table class="custom-table">
@@ -65,12 +73,12 @@ import { Router } from '@angular/router';
     
     .table-container { overflow-x: auto; }
     .custom-table { width: 100%; border-collapse: collapse; text-align: left; }
-    .custom-table th { padding: 15px; color: var(--color-text-muted); font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.05); }
-    .custom-table td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .custom-table th { padding: 15px; color: var(--color-primary-light); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; border-bottom: 2px solid rgba(255,255,255,0.05); }
+    .custom-table td { padding: 18px 15px; border-bottom: 1px solid rgba(255,255,255,0.03); color: #ffffff; font-size: 0.95rem; }
     
-    .table-row:hover { background: rgba(255,255,255,0.02); }
+    .table-row:hover { background: rgba(255,255,255,0.04); }
     .text-right { text-align: right; }
-    .bold { font-weight: 600; color: var(--color-primary); }
+    .bold { font-weight: 700; color: var(--color-primary-light); font-size: 1.05rem; }
     
     .badge { background: rgba(16, 185, 129, 0.1); color: var(--color-primary); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; }
     
@@ -80,6 +88,7 @@ import { Router } from '@angular/router';
 })
 export class GastosDashboardComponent implements OnInit {
   gastos: Gasto[] = [];
+  showForm = false;
 
   constructor(
     private authService: AuthService, 
@@ -96,6 +105,11 @@ export class GastosDashboardComponent implements OnInit {
       next: (data) => this.gastos = data,
       error: (err) => console.error('Error cargando gastos', err)
     });
+  }
+
+  handleSave() {
+    this.showForm = false;
+    this.loadGastos(); // Recargar la tabla
   }
 
   logout() {

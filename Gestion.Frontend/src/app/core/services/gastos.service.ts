@@ -21,4 +21,8 @@ export class GastosService {
   getGastos(): Observable<Gasto[]> {
     return this.http.get<Gasto[]>(this.apiUrl);
   }
+
+  createGasto(gasto: Partial<Gasto>): Observable<any> {
+    return this.http.post(this.apiUrl, gasto);
+  }
 }
