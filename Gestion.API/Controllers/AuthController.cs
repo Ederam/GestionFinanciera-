@@ -31,14 +31,7 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<ActionResult<string>> Login(LoginCommand command)
     {
-        try
-        {
-            var token = await _mediator.Send(command);
-            return Ok(new { Token = token });
-        }
-        catch (Exception ex)
-        {
-            return Unauthorized(new { Message = ex.Message });
-        }
+        var token = await _mediator.Send(command);
+        return Ok(new { Token = token });
     }
 }

@@ -24,7 +24,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, string>
 
         if (usuario == null)
         {
-            throw new Exception("Credenciales inválidas."); // En un entorno real, usar UnauthorizedException
+            throw new UnauthorizedException("Credenciales inválidas.");
         }
 
         // Extraer los bytes del string Base64 guardado
@@ -38,12 +38,11 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, string>
         using var pbkdf2 = new Rfc2898DeriveBytes(request.Password, salt, 100000, HashAlgorithmName.SHA256);
         byte[] hash = pbkdf2.GetBytes(32);
 
-        // Comparar los resultados
         for (int i = 0; i < 32; i++)
         {
             if (hashBytes[i + 16] != hash[i])
             {
-                throw new Exception("Credenciales inválidas.");
+                throw new UnauthorizedException("Credenciales inválidas.");
             }
         }
 
