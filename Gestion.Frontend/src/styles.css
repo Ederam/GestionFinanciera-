@@ -1,1 +1,86 @@
-/* You can add global styles to this file, and also import other style files */
+/* Sistema de Diseño - GestionFinanciera (Premium Green) */
+:root {
+  /* Tonos Verdes Financieros */
+  --color-primary: #10b981; /* Verde Esmeralda */
+  --color-primary-dark: #059669;
+  --color-primary-light: #34d399;
+  --color-accent: #0f766e;
+  
+  /* Fondos (Dark Mode Premium) */
+  --color-bg-base: #0f172a;
+  --color-bg-surface: #1e293b;
+  --color-bg-glass: rgba(30, 41, 59, 0.7);
+  
+  /* Textos */
+  --color-text-main: #f8fafc;
+  --color-text-muted: #94a3b8;
+  
+  /* Utilidades */
+  --shadow-glass: 0 4px 30px rgba(0, 0, 0, 0.1);
+  --border-glass: 1px solid rgba(255, 255, 255, 0.1);
+  --radius-lg: 16px;
+  --radius-md: 8px;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--color-bg-base);
+  color: var(--color-text-main);
+  min-height: 100vh;
+  /* Fondo con sutil gradiente verde para dar vida */
+  background-image: radial-gradient(circle at top right, rgba(16, 185, 129, 0.15), transparent 40%),
+                    radial-gradient(circle at bottom left, rgba(15, 118, 110, 0.15), transparent 40%);
+  background-attachment: fixed;
+}
+
+/* Utilidades de UI (Glassmorphism) */
+.glass-panel {
+  background: var(--color-bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: var(--border-glass);
+  box-shadow: var(--shadow-glass);
+  border-radius: var(--radius-lg);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  color: white;
+  margin-bottom: 16px;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin-bottom: 6px;
+}
+
