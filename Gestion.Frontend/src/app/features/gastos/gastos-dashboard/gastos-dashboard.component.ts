@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth.service';
 import { GastosService, Gasto } from '../../../core/services/gastos.service';
 import { Router } from '@angular/router';
 import { GastoFormComponent } from '../gasto-form/gasto-form.component';
+import Chart from 'chart.js/auto';
 
 @Component({
   selector: 'app-gastos-dashboard',
@@ -11,12 +12,33 @@ import { GastoFormComponent } from '../gasto-form/gasto-form.component';
   imports: [CommonModule, GastoFormComponent],
   template: `
     <div class="dashboard-container">
-      <nav class="glass-panel navbar">
-        <div class="logo">Finance<span class="text-primary">Pro</span></div>
-        <button class="btn-logout" (click)="logout()">Cerrar Sesión</button>
-      </nav>
-      
       <main class="content">
+        <!-- Sección de Resumen Visual -->
+        <div class="summary-grid">
+          <div class="glass-panel chart-card">
+            <h3>Distribución por Categoría</h3>
+            <div class="chart-container">
+              <canvas id="expensesChart"></canvas>
+            </div>
+          </div>
+          
+          <div class="glass-panel stats-card">
+            <h3>Resumen Total</h3>
+            <div class="total-amount">{{ totalGastos | currency:'USD':'symbol':'1.0-0' }}</div>
+            <p class="text-muted">Total de gastos registrados este mes</p>
+            <div class="stats-list">
+              <div class="stat-item">
+                <span>Transacciones</span>
+                <span class="bold">{{ gastos.length }}</span>
+              </div>
+              <div class="stat-item">
+                <span>Promedio</span>
+                <span class="bold">{{ (totalGastos / (gastos.length || 1)) | currency:'USD':'symbol':'1.0-0' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="glass-panel main-card">
           <div class="card-header">
             <h2>Tus Gastos Recientes</h2>
@@ -62,12 +84,17 @@ import { GastoFormComponent } from '../gasto-form/gasto-form.component';
     </div>
   `,
   styles: [`
-    .dashboard-container { padding: 20px; max-width: 1200px; margin: 0 auto; }
-    .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; margin-bottom: 30px; }
-    .logo { font-size: 1.5rem; font-weight: bold; }
-    .text-primary { color: var(--color-primary); }
-    .btn-logout { background: transparent; color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); padding: 8px 16px; border-radius: var(--radius-md); cursor: pointer; }
+    .dashboard-container { animation: fadeIn 0.5s ease; }
     
+    .summary-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; margin-bottom: 30px; }
+    .chart-card, .stats-card { padding: 25px; min-height: 300px; }
+    .chart-container { position: relative; height: 200px; width: 100%; display: flex; justify-content: center; }
+    
+    .total-amount { font-size: 2.5rem; font-weight: 800; color: var(--color-primary-light); margin: 20px 0 5px 0; }
+    .stats-list { margin-top: 25px; display: flex; flex-direction: column; gap: 12px; }
+    .stat-item { display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .text-muted { color: var(--color-text-muted); font-size: 0.9rem; }
+
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
     .main-card { padding: 30px; }
     
@@ -84,11 +111,17 @@ import { GastoFormComponent } from '../gasto-form/gasto-form.component';
     
     .empty-state { padding: 60px 0; text-align: center; background: rgba(0,0,0,0.1); border-radius: var(--radius-md); }
     .icon { font-size: 3rem; }
+
+    @media (max-width: 768px) {
+      .summary-grid { grid-template-columns: 1fr; }
+    }
   `]
 })
-export class GastosDashboardComponent implements OnInit {
+export class GastosDashboardComponent implements OnInit, OnDestroy {
   gastos: Gasto[] = [];
   showForm = false;
+  totalGastos = 0;
+  chart: any;
 
   constructor(
     private authService: AuthService, 
@@ -100,20 +133,78 @@ export class GastosDashboardComponent implements OnInit {
     this.loadGastos();
   }
 
+  ngOnDestroy(): void {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+  }
+
   loadGastos(): void {
-    this.gastosService.getGastos().subscribe({
-      next: (data) => this.gastos = data,
+    const usuarioId = this.authService.getUserIdFromToken();
+    if (!usuarioId) return;
+
+    this.gastosService.getGastos(usuarioId).subscribe({
+      next: (data) => {
+        this.gastos = data;
+        this.calculateTotals();
+        this.updateChart();
+      },
       error: (err) => console.error('Error cargando gastos', err)
+    });
+  }
+
+  calculateTotals(): void {
+    this.totalGastos = this.gastos.reduce((acc, curr) => acc + Number(curr.monto), 0);
+  }
+
+  updateChart(): void {
+    // Agrupar por categoría
+    const categories: { [key: string]: number } = {};
+    this.gastos.forEach(g => {
+      categories[g.categoria] = (categories[g.categoria] || 0) + Number(g.monto);
+    });
+
+    const labels = Object.keys(categories);
+    const data = Object.values(categories);
+
+    if (this.chart) {
+      this.chart.destroy();
+    }
+
+    const ctx = document.getElementById('expensesChart') as HTMLCanvasElement;
+    if (!ctx) return;
+
+    this.chart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: data,
+          backgroundColor: [
+            '#10b981', '#059669', '#34d399', '#0f766e', '#064e3b', '#6ee7b7'
+          ],
+          borderColor: 'rgba(255, 255, 255, 0.1)',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: {
+              color: '#94a3b8',
+              font: { family: 'Inter', size: 12 }
+            }
+          }
+        }
+      }
     });
   }
 
   handleSave() {
     this.showForm = false;
-    this.loadGastos(); // Recargar la tabla
-  }
-
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+    this.loadGastos(); // Recargar la tabla y gráfico
   }
 }

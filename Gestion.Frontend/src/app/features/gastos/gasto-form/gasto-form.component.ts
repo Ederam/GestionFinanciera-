@@ -1,7 +1,9 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { GastosService } from '../../../core/services/gastos.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { CategoriasService, Categoria } from '../../../core/services/categorias.service';
 
 @Component({
   selector: 'app-gasto-form',
@@ -43,10 +45,15 @@ import { GastosService } from '../../../core/services/gastos.service';
 
           <div class="form-group">
             <label>Categoría</label>
-            <select formControlName="categoriaId" [class.error]="isFieldInvalid('categoriaId')">
-              <option value="">Selecciona una categoría</option>
-              <option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nombre }}</option>
-            </select>
+            <div class="category-select-wrapper">
+              <select formControlName="categoriaId" [class.error]="isFieldInvalid('categoriaId')">
+                <option value="">Selecciona una categoría</option>
+                <option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nombre }}</option>
+              </select>
+              <p class="empty-categories" *ngIf="categorias.length === 0">
+                No tienes categorías. Créalas en la gestión de categorías.
+              </p>
+            </div>
             <small class="error-text" *ngIf="isFieldInvalid('categoriaId')">Selecciona una categoría.</small>
           </div>
 
@@ -85,14 +92,14 @@ import { GastosService } from '../../../core/services/gastos.service';
       padding: 14px; border-radius: var(--radius-md); color: #ffffff; outline: none;
       font-size: 1rem; width: 100%; box-sizing: border-box;
       font-family: inherit;
-      color-scheme: dark; /* Esto fuerza al calendario nativo a ser oscuro */
+      color-scheme: dark;
     }
     input:focus, select:focus { border-color: var(--color-primary); background: rgba(255, 255, 255, 0.12); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); }
     
     input.error, select.error { border-color: #ef4444; background: rgba(239, 68, 68, 0.05); }
     .error-text { color: #ef4444; font-size: 0.75rem; margin-top: 4px; animation: shake 0.2s ease-in-out; }
+    .empty-categories { font-size: 0.75rem; color: #fbbf24; margin-top: 5px; }
 
-    /* Estilo para el icono del calendario nativo */
     input[type="date"]::-webkit-calendar-picker-indicator {
       cursor: pointer;
       filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(128deg) brightness(96%) contrast(101%);
@@ -112,28 +119,40 @@ import { GastosService } from '../../../core/services/gastos.service';
     }
   `]
 })
-export class GastoFormComponent {
+export class GastoFormComponent implements OnInit {
   @Output() onSave = new EventEmitter<void>();
   @Output() onClose = new EventEmitter<void>();
 
   gastoForm: FormGroup;
   isLoading = false;
+  categorias: Categoria[] = [];
 
-  // Categorías de ejemplo (Mock)
-  categorias = [
-    { id: '3fa85f64-5717-4562-b3fc-2c963f66afa6', nombre: 'Alimentación' },
-    { id: 'e1d2c3b4-a5b6-c7d8-e9f0-1234567890ab', nombre: 'Servicios' },
-    { id: 'f1a2b3c4-d5e6-f7a8-b9c0-2134567890ac', nombre: 'Transporte' },
-    { id: 'a1b2c3d4-e5f6-a7b8-c9d0-3134567890ad', nombre: 'Entretenimiento' }
-  ];
-
-  constructor(private fb: FormBuilder, private gastosService: GastosService) {
+  constructor(
+    private fb: FormBuilder, 
+    private gastosService: GastosService,
+    private authService: AuthService,
+    private categoriasService: CategoriasService
+  ) {
     this.gastoForm = this.fb.group({
       descripcion: ['', [Validators.required, Validators.minLength(3)]],
       monto: ['', [Validators.required, Validators.min(0.01)]],
       fecha: [new Date().toISOString().substring(0, 10), Validators.required],
       categoriaId: ['', Validators.required]
     });
+  }
+
+  ngOnInit(): void {
+    this.loadCategorias();
+  }
+
+  loadCategorias(): void {
+    const usuarioId = this.authService.getUserIdFromToken();
+    if (usuarioId) {
+      this.categoriasService.getCategorias(usuarioId).subscribe({
+        next: (data) => this.categorias = data,
+        error: (err) => console.error('Error al cargar categorías', err)
+      });
+    }
   }
 
   isFieldInvalid(field: string): boolean {
@@ -143,7 +162,6 @@ export class GastoFormComponent {
 
   onlyNumbers(event: KeyboardEvent): boolean {
     const charCode = (event.which) ? event.which : event.keyCode;
-    // Permitir números (48-57) y el punto decimal (46)
     if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode !== 46) {
       event.preventDefault();
       return false;
@@ -154,7 +172,18 @@ export class GastoFormComponent {
   onSubmit() {
     if (this.gastoForm.valid) {
       this.isLoading = true;
-      this.gastosService.createGasto(this.gastoForm.value).subscribe({
+      const usuarioId = this.authService.getUserIdFromToken();
+      if (!usuarioId) {
+        this.isLoading = false;
+        return;
+      }
+
+      const gastoPayload = {
+        ...this.gastoForm.value,
+        usuarioId: usuarioId
+      };
+
+      this.gastosService.createGasto(gastoPayload).subscribe({
         next: () => {
           this.isLoading = false;
           this.onSave.emit();

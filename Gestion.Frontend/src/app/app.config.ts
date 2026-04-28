@@ -11,7 +11,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }), 
     provideRouter(routes),
     provideHttpClient(withInterceptors([
-      mockInterceptor, // <-- Agregado para desarrollo offline
+      // mockInterceptor, // <-- DESACTIVADO para usar la API REAL
       jwtInterceptor
     ]))
   ]

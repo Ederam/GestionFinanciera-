@@ -44,7 +44,20 @@ export class AuthService {
 
   public isAuthenticated(): boolean {
     const token = this.getToken();
-    // Aquí podríamos validar si el token expiró, pero por ahora comprobamos que exista.
     return !!token;
+  }
+
+  public getUserIdFromToken(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      // Buscamos 'sub' o 'nameid' según la convención del token
+      return payload.sub || payload.nameid || null;
+    } catch (e) {
+      console.error('Error al decodificar el token', e);
+      return null;
+    }
   }
 }

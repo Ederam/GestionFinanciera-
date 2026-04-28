@@ -18,8 +18,8 @@ export class GastosService {
 
   constructor(private http: HttpClient) { }
 
-  getGastos(): Observable<Gasto[]> {
-    return this.http.get<Gasto[]>(this.apiUrl);
+  getGastos(usuarioId: string): Observable<Gasto[]> {
+    return this.http.get<Gasto[]>(`${this.apiUrl}?usuarioId=${usuarioId}`);
   }
 
   createGasto(gasto: Partial<Gasto>): Observable<any> {

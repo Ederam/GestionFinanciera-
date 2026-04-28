@@ -17,7 +17,7 @@ public class CreateGastoCommandHandler : IRequestHandler<CreateGastoCommand, Gui
     {
         var entity = new Gasto(
             request.Monto,
-            request.Fecha,
+            DateTime.SpecifyKind(request.Fecha, DateTimeKind.Utc), // Convertimos a UTC para Postgres
             request.Descripcion,
             request.CategoriaId,
             request.UsuarioId,
