@@ -6,6 +6,8 @@ export interface Categoria {
   id: string;
   nombre: string;
   colorHex: string;
+  icono: string;
+  esDeuda: boolean;
 }
 
 @Injectable({

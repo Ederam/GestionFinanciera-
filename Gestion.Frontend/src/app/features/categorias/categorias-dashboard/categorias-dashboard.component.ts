@@ -54,33 +54,70 @@ import { AuthService } from '../../../core/services/auth.service';
     </div>
   `,
   styles: [`
-    .categorias-container { animation: fadeIn 0.5s ease; }
+    .categorias-container { 
+      animation: fadeIn 0.5s ease; 
+      max-width: 1400px; 
+      margin: 0 auto;
+    }
     .header-section { padding: 30px; margin-bottom: 30px; }
-    .main-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 30px; }
     
-    .form-card, .list-card { padding: 30px; }
-    h3 { margin-bottom: 20px; color: var(--color-primary-light); }
+    .main-grid { 
+      display: grid; 
+      grid-template-columns: minmax(300px, 1fr) 2fr; 
+      gap: 30px; 
+      align-items: start;
+    }
+    
+    .form-card, .list-card { padding: 30px; height: fit-content; }
+    h3 { margin-bottom: 25px; color: var(--color-primary-light); font-weight: 700; }
     
     .form-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-    input[type="text"] { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: var(--radius-md); color: white; }
-    .color-input { width: 100%; height: 50px; border: none; background: none; cursor: pointer; }
+    label { color: var(--color-text-muted); font-size: 0.9rem; font-weight: 500; }
     
-    .cat-list { display: flex; flex-direction: column; gap: 15px; }
+    input[type="text"] { 
+      background: rgba(255,255,255,0.05); 
+      border: 1px solid rgba(255,255,255,0.1); 
+      padding: 14px; 
+      border-radius: var(--radius-md); 
+      color: white;
+      transition: all 0.3s ease;
+    }
+    input[type="text"]:focus { border-color: var(--color-primary); background: rgba(255,255,255,0.08); outline: none; }
+    
+    .color-input { width: 100%; height: 50px; border: none; background: none; cursor: pointer; border-radius: 8px; }
+    
+    .cat-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+    
     .cat-item { 
       display: flex; justify-content: space-between; align-items: center; 
-      padding: 15px; background: rgba(255,255,255,0.03); border-radius: var(--radius-md);
+      padding: 20px; background: rgba(255,255,255,0.03); border-radius: var(--radius-lg);
       border: 1px solid rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
     }
-    .cat-info { display: flex; align-items: center; gap: 15px; }
-    .color-badge { width: 15px; height: 15px; border-radius: 50%; }
-    .btn-delete { background: none; border: none; cursor: pointer; font-size: 1.2rem; opacity: 0.6; transition: 0.3s; }
-    .btn-delete:hover { opacity: 1; transform: scale(1.1); }
+    .cat-item:hover { transform: translateY(-3px); background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
     
-    .center { text-align: center; padding: 40px 0; }
+    .cat-info { display: flex; align-items: center; gap: 15px; }
+    .color-badge { width: 35px; height: 35px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+    
+    .btn-delete { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; padding: 8px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+    .btn-delete:hover { background: #ef4444; color: white; transform: scale(1.1); }
+    
+    .center { text-align: center; padding: 60px 0; grid-column: 1 / -1; }
     .text-muted { color: var(--color-text-muted); font-size: 0.9rem; }
 
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
+
+    /* Responsive Breakpoints */
+    @media (max-width: 1200px) {
+      .main-grid { grid-template-columns: 1fr; }
+      .cat-list { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+    }
+    
+    @media (max-width: 600px) {
+      .header-section { padding: 20px; }
+      .form-card, .list-card { padding: 20px; }
+      .cat-list { grid-template-columns: 1fr; }
+    }
   `]
 })
 export class CategoriasDashboardComponent implements OnInit {
@@ -116,14 +153,24 @@ export class CategoriasDashboardComponent implements OnInit {
       const userId = this.authService.getUserIdFromToken();
       if (!userId) return;
 
-      const newCat = { ...this.catForm.value, usuarioId: userId };
+      const newCat = { 
+        ...this.catForm.value, 
+        usuarioId: userId,
+        icono: 'tag', // Valor por defecto requerido por el Backend
+        esDeuda: false // Valor por defecto
+      };
+
       this.categoriasService.createCategoria(newCat).subscribe({
         next: () => {
           this.isLoading = false;
           this.catForm.reset({ colorHex: '#10b981' });
           this.loadCategorias();
         },
-        error: () => this.isLoading = false
+        error: (err) => {
+          this.isLoading = false;
+          console.error('Error al crear categoría:', err);
+          alert('Hubo un error al crear la categoría. Revisa la consola.');
+        }
       });
     }
   }
