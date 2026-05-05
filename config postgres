@@ -12,3 +12,6 @@ pg_dump -h localhost -U postgres -d GestionFinancieraDb > backup_gestion.sql
 datos de login
 admin@camilo.com
 PasswordSecreto123
+
+${{Postgres.PGHOST}};Port=${{Postgres.PGPORT}};Username=${{Postgres.PGUSER}};Password=${{Postgres.PGPASSWORD}};Database=${{Postgres.PGDATABASE}}
+
