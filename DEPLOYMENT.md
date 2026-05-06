@@ -21,16 +21,26 @@ Este documento detalla los pasos para desplegar la aplicación completa en entor
 ---
 
 ## 🎨 2. Frontend (Vercel)
-**Tecnología:** Angular (Standalone).
+**Tecnología:** Angular 18+ (Standalone).
 
-### Configuración del Proyecto:
-- **Root Directory**: `/Gestion.Frontend`
-- **Framework Preset**: Angular
-- **Build Command**: `ng build`
-- **Output Directory**: `dist/gestion.frontend/browser`
+Al estar el Backend y Frontend en el mismo repositorio, Vercel necesita instrucciones específicas para encontrar y compilar solo la carpeta de Angular.
 
-### Paso Crítico de Sincronización:
-Asegurarse de que el archivo `src/environments/environment.prod.ts` contenga la URL generada por Railway (con el sufijo `/api`).
+### Configuración Inicial (Al Importar el Proyecto):
+- **Framework Preset**: Seleccionar explícitamente `Angular`.
+- **Root Directory**: Hacer clic en Edit y seleccionar `Gestion.Frontend`. (Esto le dice a Vercel que ignore el Backend en C#).
+- **Build Command**: Dejar el default (`ng build`).
+
+### Configuración Crítica (Después del primer despliegue):
+Debido a la nueva estructura de Angular (Application Builder), Vercel puede generar un error `404 NOT FOUND` si no se ajusta la carpeta de salida.
+1. Ir a la pestaña **Settings** del proyecto en Vercel.
+2. Menú lateral izquierdo: **General**.
+3. Bajar hasta **Build & Development Settings**.
+4. En **Output Directory**, encender el switch de *Override*.
+5. Escribir exactamente: `dist/gestion.frontend/browser`
+6. Guardar (Save) y realizar un **Redeploy** desde la pestaña de Deployments.
+
+### Paso de Sincronización:
+El archivo `src/environments/environment.prod.ts` **debe** contener la URL pública que generó Railway (con el sufijo `/api`) *antes* de hacer el push que dispara el despliegue en Vercel.
 
 ---
 

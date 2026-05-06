@@ -81,6 +81,21 @@ builder.Services.AddOpenApi(options =>
 
 var app = builder.Build();
 
+// 4. Aplicar Migraciones Automáticamente en Producción
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        context.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error al aplicar migraciones: {ex.Message}");
+    }
+}
+
 app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
