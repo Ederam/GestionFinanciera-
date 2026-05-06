@@ -16,5 +16,6 @@ RUN dotnet publish "Gestion.API.csproj" -c Release -o /app/publish /p:UseAppHost
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
-ENV ASPNETCORE_HTTP_PORTS=${PORT}
+EXPOSE 8080
+ENV ASPNETCORE_HTTP_PORTS=8080
 ENTRYPOINT ["dotnet", "Gestion.API.dll"]
