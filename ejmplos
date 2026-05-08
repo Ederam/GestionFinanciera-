@@ -39,3 +39,8 @@ test auth
 {
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NDFkNGM0ZC05MjhhLTQxM2EtYWFhMS0yNzk3NjI4YWQ0YTEiLCJlbWFpbCI6ImFkbWluQGNhbWlsby5jb20iLCJuYW1lIjoiQ2FtaWxvIEFkbWluIiwianRpIjoiNGMzNDE0ZTMtZWY2NC00Y2YyLTg0Y2EtZmQ3NzJmM2NmZDc5IiwiZXhwIjoxNzc2OTk4ODE4LCJpc3MiOiJHZXN0aW9uRmluYW5jaWVyYUFQSSIsImF1ZCI6Ikdlc3Rpb25GaW5hbmNpZXJhQXBwIn0.ayyxQcEf3KaWbUvIBc9mDnpnmsomngGmni9VVaqoHEg"
 }
+
+https: //gestion-financiera-seven.vercel.app/login
+admin@camilo.com
+PasswordSecreto123
+
