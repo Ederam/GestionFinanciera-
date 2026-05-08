@@ -1,10 +1,11 @@
 using Gestion.Application.Categorias.Commands.CreateCategoria;
 using Gestion.Application.Categorias.Queries.GetCategorias;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Gestion.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class CategoriasController : ControllerBase
