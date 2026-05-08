@@ -54,8 +54,11 @@ export class AuthService {
 
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
-      // Buscamos 'sub' o 'nameid' según la convención del token
-      return payload.sub || payload.nameid || null;
+      // Buscamos 'sub' o 'nameid' o el URI completo del claim identifier que usa .NET 9
+      return payload.sub || 
+             payload.nameid || 
+             payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] || 
+             null;
     } catch (e) {
       console.error('Error al decodificar el token', e);
       return null;
