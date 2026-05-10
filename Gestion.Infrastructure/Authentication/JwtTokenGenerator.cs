@@ -19,9 +19,9 @@ public class JwtTokenGenerator : IJwtTokenGenerator
 
     public string GenerateToken(Usuario usuario)
     {
-        var secret = _configuration["Jwt:Key"] ?? _configuration["JwtSettings:Secret"];
-        var issuer = _configuration["Jwt:Issuer"] ?? _configuration["JwtSettings:Issuer"];
-        var audience = _configuration["Jwt:Audience"] ?? _configuration["JwtSettings:Audience"];
+        var secret = _configuration["Jwt:Key"] ?? _configuration["JwtSettings:Secret"] ?? Environment.GetEnvironmentVariable("JWT_KEY") ?? "ClaveSuperSecretaDeDesarrollo1234567890";
+        var issuer = _configuration["Jwt:Issuer"] ?? _configuration["JwtSettings:Issuer"] ?? "GestionFinancieraAPI";
+        var audience = _configuration["Jwt:Audience"] ?? _configuration["JwtSettings:Audience"] ?? "GestionFinancieraApp";
         var expiryMinutes = int.Parse(_configuration["Jwt:ExpiryMinutes"] ?? _configuration["JwtSettings:ExpiryMinutes"] ?? "60");
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret!));
