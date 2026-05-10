@@ -32,12 +32,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = !string.IsNullOrEmpty(builder.Configuration["Jwt:Issuer"]) ? builder.Configuration["Jwt:Issuer"] : 
-                          !string.IsNullOrEmpty(builder.Configuration["JwtSettings:Issuer"]) ? builder.Configuration["JwtSettings:Issuer"] : 
-                          "GestionFinancieraAPI",
-            ValidAudience = !string.IsNullOrEmpty(builder.Configuration["Jwt:Audience"]) ? builder.Configuration["Jwt:Audience"] : 
-                            !string.IsNullOrEmpty(builder.Configuration["JwtSettings:Audience"]) ? builder.Configuration["JwtSettings:Audience"] : 
-                            "GestionFinancieraApp",
+            ValidIssuer = builder.Configuration["Jwt:Issuer"] ?? builder.Configuration["JwtSettings:Issuer"] ?? "GestionFinancieraAPI",
+            ValidAudience = builder.Configuration["Jwt:Audience"] ?? builder.Configuration["JwtSettings:Audience"] ?? "GestionFinancieraApp",
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
         };
     });

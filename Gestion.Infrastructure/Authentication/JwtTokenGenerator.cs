@@ -19,19 +19,9 @@ public class JwtTokenGenerator : IJwtTokenGenerator
 
     public string GenerateToken(Usuario usuario)
     {
-        var secret = !string.IsNullOrEmpty(_configuration["Jwt:Key"]) ? _configuration["Jwt:Key"] : 
-                     !string.IsNullOrEmpty(_configuration["JwtSettings:Secret"]) ? _configuration["JwtSettings:Secret"] : 
-                     !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("JWT_KEY")) ? Environment.GetEnvironmentVariable("JWT_KEY") : 
-                     "ClaveSuperSecretaDeDesarrollo1234567890";
-                     
-        var issuer = !string.IsNullOrEmpty(_configuration["Jwt:Issuer"]) ? _configuration["Jwt:Issuer"] : 
-                     !string.IsNullOrEmpty(_configuration["JwtSettings:Issuer"]) ? _configuration["JwtSettings:Issuer"] : 
-                     "GestionFinancieraAPI";
-                     
-        var audience = !string.IsNullOrEmpty(_configuration["Jwt:Audience"]) ? _configuration["Jwt:Audience"] : 
-                       !string.IsNullOrEmpty(_configuration["JwtSettings:Audience"]) ? _configuration["JwtSettings:Audience"] : 
-                       "GestionFinancieraApp";
-        
+        var secret = _configuration["Jwt:Key"] ?? _configuration["JwtSettings:Secret"] ?? Environment.GetEnvironmentVariable("JWT_KEY") ?? "ClaveSuperSecretaDeDesarrollo1234567890";
+        var issuer = _configuration["Jwt:Issuer"] ?? _configuration["JwtSettings:Issuer"] ?? "GestionFinancieraAPI";
+        var audience = _configuration["Jwt:Audience"] ?? _configuration["JwtSettings:Audience"] ?? "GestionFinancieraApp";
         var expiryMinutes = int.Parse(_configuration["Jwt:ExpiryMinutes"] ?? _configuration["JwtSettings:ExpiryMinutes"] ?? "60");
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret!));
