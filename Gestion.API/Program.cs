@@ -17,7 +17,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 // 2. Configuración de JWT Segura
-var jwtKey = builder.Configuration["Jwt:Key"] ?? Environment.GetEnvironmentVariable("JWT_KEY");
+var jwtKey = builder.Configuration["Jwt:Key"] ?? builder.Configuration["JwtSettings:Secret"] ?? Environment.GetEnvironmentVariable("JWT_KEY");
 if (string.IsNullOrEmpty(jwtKey)) 
 {
     jwtKey = "ClaveSuperSecretaDeDesarrollo1234567890"; 
