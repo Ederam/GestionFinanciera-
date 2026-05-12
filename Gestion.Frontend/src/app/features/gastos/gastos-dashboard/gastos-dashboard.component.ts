@@ -64,10 +64,10 @@ import Chart from 'chart.js/auto';
               </thead>
               <tbody>
                 <tr *ngFor="let gasto of gastos" class="table-row">
-                  <td>{{ gasto.descripcion }}</td>
-                  <td><span class="badge">{{ gasto.categoria }}</span></td>
-                  <td>{{ gasto.fecha | date:'dd/MM/yyyy' }}</td>
-                  <td class="text-right bold">{{ gasto.monto | currency:'USD':'symbol':'1.0-0' }}</td>
+                  <td data-label="Descripción"><span>{{ gasto.descripcion }}</span></td>
+                  <td data-label="Categoría"><span class="badge">{{ gasto.categoria }}</span></td>
+                  <td data-label="Fecha"><span>{{ gasto.fecha | date:'dd/MM/yyyy' }}</span></td>
+                  <td data-label="Monto" class="text-right bold"><span>{{ gasto.monto | currency:'USD':'symbol':'1.0-0' }}</span></td>
                 </tr>
               </tbody>
             </table>
@@ -94,8 +94,9 @@ import Chart from 'chart.js/auto';
       align-items: start;
     }
     
-    .chart-card, .stats-card { padding: 30px; min-height: 350px; display: flex; flex-direction: column; }
-    .chart-container { flex: 1; position: relative; min-height: 250px; width: 100%; display: flex; justify-content: center; align-items: center; }
+    .chart-card, .stats-card { padding: 30px; min-height: 350px; display: flex; flex-direction: column; box-sizing: border-box; }
+    .chart-container { flex: 1; position: relative; min-height: 250px; width: 100%; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+    .chart-container canvas { max-width: 100% !important; height: auto !important; }
     
     .total-amount { font-size: 3rem; font-weight: 800; color: var(--color-primary-light); margin: 20px 0 5px 0; letter-spacing: -1px; }
     .stats-list { margin-top: auto; display: flex; flex-direction: column; gap: 15px; }
@@ -133,11 +134,51 @@ import Chart from 'chart.js/auto';
     }
 
     @media (max-width: 600px) {
-      .main-card { padding: 20px; }
-      .table-container { margin: 0 -20px; padding: 0 20px; }
-      .total-amount { font-size: 2.5rem; }
-      .card-header h2 { font-size: 1.4rem; }
-      .btn-primary { width: 100%; }
+      .dashboard-container { padding: 0 10px; overflow-x: hidden; }
+      .summary-grid { gap: 15px; margin-bottom: 20px; }
+      .chart-card, .stats-card { padding: 20px; }
+      .main-card { padding: 20px; box-sizing: border-box; }
+      .table-container { margin: 0; padding: 0; overflow-x: hidden; }
+      .total-amount { font-size: 2.2rem; }
+      .card-header h2 { font-size: 1.2rem; }
+      .btn-primary { width: 100%; box-sizing: border-box; }
+      
+      /* Refactor de Tabla a Tarjetas */
+      .custom-table, .custom-table tbody, .custom-table tr, .custom-table td {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .custom-table thead { display: none; }
+      
+      .table-row {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: var(--radius-md);
+        margin-bottom: 15px;
+        padding: 10px 0;
+      }
+      
+      .custom-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        border-bottom: none;
+        text-align: right;
+      }
+      
+      .custom-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--color-text-muted);
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        text-align: left;
+      }
+      
+      .text-right { text-align: right !important; }
     }
   `]
 })
